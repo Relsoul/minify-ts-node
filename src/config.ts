@@ -4,7 +4,7 @@ export default () => {
   // 新增用户直接在user字段新增就ok
   const conf = {
     port: 10244,
-    secret: 'minify-upload',
+    secret: 'nKSXWSpbGCIFgMs',
     host: 'http://127.0.0.1:10244/',
     accept: {
       // 以竖线分隔
@@ -16,10 +16,7 @@ export default () => {
         maxSize: 4,
       },
     },
-    user: [
-      { name: 'soul', pw: '123456' },
-      { name: 'soul2', pw: '123456' },
-    ],
+    user: [{ name: 'soul', pw: 'nKSXWSpbGCIFgMs' }],
   };
 
   // 预先编译存储至内存

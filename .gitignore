@@ -5,6 +5,8 @@
 public
 .history
 
+*.zip
+
 # Logs
 logs
 *.log

@@ -19,6 +19,7 @@ import { buildResult } from './utils/result';
 import * as multer from 'multer';
 import * as moment from 'moment';
 import { AuthGuard } from './auth.guard';
+import { v4 as uuidv4 } from 'uuid';
 
 async function deleteFile(path) {
   let res;
@@ -48,7 +49,7 @@ const storage = multer.diskStorage({
     const locals = req.res.locals;
     const fileInfo = path.parse(file.originalname);
     locals['__fileExt'] = fileInfo.ext;
-    cb(null, fileInfo.name + '-' + Date.now() + fileInfo.ext);
+    cb(null, uuidv4() + fileInfo.ext);
   },
 });
 
