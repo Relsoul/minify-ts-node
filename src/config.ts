@@ -8,7 +8,7 @@ export default () => {
     host: 'http://127.0.0.1:10244/',
     accept: {
       // 以竖线分隔
-      '.jpg|.png|.jpeg': {
+      '.jpg|.png|.jpeg|.webp': {
         // image类型的最大上传3M,maxSize:3M
         maxSize: 100,
       },

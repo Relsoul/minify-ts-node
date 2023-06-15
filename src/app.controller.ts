@@ -35,7 +35,7 @@ async function deleteFile(path) {
 }
 
 function hasAllowQuery(queryList) {
-  const allowQuery = ['w', 'h'];
+  const allowQuery = ['w', 'h', 'f'];
   const _returnKeys = [];
   for (const i of queryList) {
     if (allowQuery.includes(i)) {
@@ -101,22 +101,29 @@ export class AppController {
         width: queryData['w'] ? parseInt(queryData['w']) : null,
         height: queryData['h'] ? parseInt(queryData['h']) : null,
       };
+      const formatList = ['png', 'jpg', 'jpeg', 'webp'];
+      const format = 'webp';
+      if (queryData['f']) {
+        if (!formatList.includes(queryData['f'])) {
+          return res.sendStatus(400);
+        }
+      }
+
       const semiTransparentRedPng = await sharp(fileBuffer)
         .resize(resizeOpt)
-        .png()
+        .toFormat(format)
         .toBuffer();
-      res.setHeader('Content-Type', 'image/png');
+      res.setHeader('Content-Type', `image/${format}`);
       return res.send(semiTransparentRedPng);
     }
 
     console.log('public');
     res.sendFile(filePath);
-    // next();
   }
 
   @Get()
   getHello(): string {
-    return this.appService.getHello();
+    return 'minify upload start success';
   }
 
   @Post('/upload')
