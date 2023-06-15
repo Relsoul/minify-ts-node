@@ -9,9 +9,10 @@ async function bootstrap() {
     logger: console,
   });
 
-  app.useStaticAssets(path.join(__dirname, '..', 'public'), {
-    prefix: '/public',
-  });
+  // app.useStaticAssets(path.join(__dirname, '..', 'public'), {
+  //   index: false,
+  //   prefix: '/public',
+  // });
 
   app.enableCors();
   const { httpAdapter } = app.get(HttpAdapterHost);

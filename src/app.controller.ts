@@ -4,8 +4,10 @@ import {
   HttpException,
   HttpStatus,
   Inject,
+  Next,
   Post,
   Req,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -20,7 +22,8 @@ import * as multer from 'multer';
 import * as moment from 'moment';
 import { AuthGuard } from './auth.guard';
 import { v4 as uuidv4 } from 'uuid';
-
+import { NextFunction, Request, Response } from 'express';
+import * as sharp from 'sharp';
 async function deleteFile(path) {
   let res;
   try {
@@ -29,6 +32,17 @@ async function deleteFile(path) {
     return Promise.reject(new Error(e));
   }
   return Promise.resolve(res);
+}
+
+function hasAllowQuery(queryList) {
+  const allowQuery = ['w', 'h'];
+  const _returnKeys = [];
+  for (const i of queryList) {
+    if (allowQuery.includes(i)) {
+      _returnKeys.push(i);
+    }
+  }
+  return _returnKeys;
 }
 
 const storage = multer.diskStorage({
@@ -60,6 +74,45 @@ export class AppController {
     @Inject('ConfigService')
     private configService: ConfigService,
   ) {}
+
+  @Get('/public/*')
+  async renderFile(
+    @Res() res: Response,
+    @Next() next: NextFunction,
+    @Req() req: Request,
+  ) {
+    const originalUrl = req.path;
+    const filePath = path.join(__dirname, '../', originalUrl);
+
+    const keys = Object.keys(req.query);
+    const allowQuery = hasAllowQuery(keys);
+    if (allowQuery.length > 0) {
+      const exists = await fs.pathExists(filePath);
+      if (!exists) {
+        return res.sendStatus(404);
+      }
+      const queryData = {};
+      for (const i of allowQuery) {
+        const val = req.query[i];
+        queryData[i] = val;
+      }
+      const fileBuffer = await fs.readFile(filePath);
+      const resizeOpt = {
+        width: queryData['w'] ? parseInt(queryData['w']) : null,
+        height: queryData['h'] ? parseInt(queryData['h']) : null,
+      };
+      const semiTransparentRedPng = await sharp(fileBuffer)
+        .resize(resizeOpt)
+        .png()
+        .toBuffer();
+      res.setHeader('Content-Type', 'image/png');
+      return res.send(semiTransparentRedPng);
+    }
+
+    console.log('public');
+    res.sendFile(filePath);
+    // next();
+  }
 
   @Get()
   getHello(): string {
