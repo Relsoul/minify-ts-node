@@ -1,8 +1,9 @@
 import * as crypto from 'crypto';
-
+import * as fs from 'fs-extra';
 export default () => {
   // 新增用户直接在user字段新增就ok
-  const conf = {
+  const jsonData = fs.readJsonSync('../config.json');
+  const conf = jsonData || {
     port: 10244,
     secret: 'nKSXWSpbGCIFgMs',
     host: 'http://127.0.0.1:10244/',

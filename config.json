@@ -1,0 +1,14 @@
+{
+  "port": 10244,
+  "secret": "nKSXWSpbGCIFgMs",
+  "host": "http://127.0.0.1:10244/",
+  "accept": {
+    ".jpg|.png|.jpeg|.webp": {
+      "maxSize": 100
+    },
+    ".zip|.gif": {
+      "maxSize": 4
+    }
+  },
+  "user": [{ "name": "soul", "pw": "nKSXWSpbGCIFgMs" }]
+}
