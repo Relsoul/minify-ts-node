@@ -82,7 +82,7 @@ export class AppController {
         width: queryData['w'] ? parseInt(queryData['w']) : null,
         height: queryData['h'] ? parseInt(queryData['h']) : null,
       };
-      const formatList = ['png', 'jpg', 'jpeg', 'webp'];
+      const formatList = this.configService.get('compressImageOpt.allowFormat');
       const _pathParse = path.parse(filePath);
       const originExt = _pathParse.ext.toLowerCase().replace('.', '');
       const format = queryData['f'] || originExt;
