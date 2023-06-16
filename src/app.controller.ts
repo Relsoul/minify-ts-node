@@ -83,7 +83,9 @@ export class AppController {
         height: queryData['h'] ? parseInt(queryData['h']) : null,
       };
       const formatList = ['png', 'jpg', 'jpeg', 'webp'];
-      const format = 'webp';
+      const _pathParse = path.parse(filePath);
+      const originExt = _pathParse.ext.toLowerCase().replace('.', '');
+      const format = queryData['f'] || originExt;
       if (queryData['f']) {
         if (!formatList.includes(queryData['f'])) {
           return res.sendStatus(400);
