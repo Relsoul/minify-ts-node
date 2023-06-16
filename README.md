@@ -1,73 +1,85 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 说明
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+本仓库为原有仓库的ts版本，并且新增了格式化等功能，[原有仓库](https://github.com/Relsoul/minify-upload)不再进行维护
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+本项目为利用闲置服务器资源，比如某些服务器月流量1T不限速,服务器是空闲状态,可以利用服务器做一个个人图床系统
 
-## Description
+轻量，简约基于nestjs+nodejs的文件上传服务器。chrome插件github地址:[戳我查看](https://github.com/Relsoul/minify-upload-chrome-extension)
+>最近写markdown没办法快捷的上传图片和文件，又不想额外打开窗口去上传文件。于是做了一个比较简约的文件上传服务器。
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Installation
+# 安装
 
-```bash
-$ npm install
+node version >= 16.x，未在低版本测试过，理论上14也是可以正常运行
+
+```
+npm install
 ```
 
-## Running the app
+# 配置
+`confis.json`
+其中host为自己的域名，user为一个数组，可以自定义添加额外的用户。
+**请运行前更改secret和user，password**
 
-```bash
-# development
-$ npm run start
+## 详解
+```js
+{
+  "port": 10244, // 监听端口 
+  "secret": "nKSXWSpbGCIFgMs", // 密钥 客户端加密用
+  "host": "https://xxx.com/", // 配置好的url host, 这里会影响到上传成功后到返回host 必须以/结尾
+  "compressImage": true, // 是否上传时压缩图片
+  "compressImageOpt": {
+    "imgExt": ["png", "jpg", "jpeg", "webp", "gif"], // 图片扩展名
+    "allowFormat": ["png", "jpg", "jpeg", "webp"], // 允许转码的图片
+    "width": 4000, // width 超过4000 转化为4000
+    "quality": 79, // 输出质量
+    "format": false // false为保持原有格式 你可以传递"webp"|"jpeg"等格式
+  },
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+  "accept": {// 允许上传的后缀名
+    ".jpg|.png|.jpeg|.webp": {
+      "maxSize": 100
+    },
+    ".zip|.gif": {
+      "maxSize": 50
+    }
+  },
+  "user": [{ 
+    "name": "soul", // 用户名
+     "pw": "nKSXWSpbGCIFgMs"  // 用户密码 可以与密钥不一致
+     }]
+}
 ```
 
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# 运行
+```shell
+npm run build
+node dist/main.js
 ```
 
-## Support
+## pm2运行
+```shell
+npm run build
+pm2 start dist/main.js
+```
+推荐使用pm2来管理运行。
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## docker 运行
+待完善
 
-## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
-## License
+# changelog
 
-Nest is [MIT licensed](LICENSE).
+### v1.0
+
+- [x] 基于文件目录化的用户文件保存与查看
+- [x] 文件大小等后端校验与过滤
+- [x] 支持user认证
+- [x] 文件上传与保存
+- [x] 静态服务器
+- [x] picgo插件支持
+- [x] 上传压缩/转换图片
+- [x] 读取图片支持调整宽高&输出格式
+- [x] 支持批量压缩/转码原有图片
+
