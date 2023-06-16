@@ -101,6 +101,24 @@ pm2 start dist/main.js
 
 
 
+# 优化图片
+此接口为处理已经上传的图片(public目录下的所有图片)进行压缩
+```
+curl --request GET \
+  --url http://xxx.com/optimize \
+  --header 'utoken: 生成的token'
+```
+token生成的规则为
+```js
+const hmac = crypto.createHmac('sha256', secret);
+hmac.update(`${name}-${pw}`);
+token = hmac.digest('hex');
+```
+目前暂未提供图形化界面操作,有需要的话后期再迭代添加。
+
+依据图片的数量需要一定时间的处理，哪怕后台接口返回了状态码为`502`等情况，实际上是正在处理中，可以忽略，切记不要重复运行.
+压缩规则跟上传图片压缩规则一致，如果不想转换格式切记设置`format:false`, 建议在转化前备份一下原有文件。
+
 # changelog
 
 ### v1.0
