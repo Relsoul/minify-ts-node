@@ -70,7 +70,7 @@ npm install
 
   "accept": {// 允许上传的后缀名
     ".jpg|.png|.jpeg|.webp": {
-      "maxSize": 100
+      "maxSize": 100 //单位为M 最大上传尺寸限制
     },
     ".zip|.gif": {
       "maxSize": 50
