@@ -7,6 +7,38 @@
 轻量，简约基于nestjs+nodejs的文件上传服务器。chrome插件github地址:[戳我查看](https://github.com/Relsoul/minify-upload-chrome-extension)
 >最近写markdown没办法快捷的上传图片和文件，又不想额外打开窗口去上传文件。于是做了一个比较简约的文件上传服务器。
 
+# 客户端
+- [chrome插件](https://github.com/Relsoul/minify-upload-chrome-extension)
+- [picgo插件](https://github.com/Relsoul/minify-picgo-host)
+
+# 图片格式化教程
+上传后图片范例 
+> [https://cdn.relsoul.com/public/uploads/soul/2023-06-16/38c5c5e8-9b4c-4a04-ae73-67e8dc894abd.png](https://cdn.relsoul.com/public/uploads/soul/2023-06-16/38c5c5e8-9b4c-4a04-ae73-67e8dc894abd.png)
+
+**format格式**
+
+`?f=webp|png|jpeg`
+>[https://cdn.relsoul.com/public/uploads/soul/2023-06-16/38c5c5e8-9b4c-4a04-ae73-67e8dc894abd.png?f=webp](https://cdn.relsoul.com/public/uploads/soul/2023-06-16/38c5c5e8-9b4c-4a04-ae73-67e8dc894abd.png?f=webp)
+
+**调整宽度**
+
+传递宽度不传递高度的情况图片会自适应处理
+
+`?w=200`
+
+> [https://cdn.relsoul.com/public/uploads/soul/2023-06-16/38c5c5e8-9b4c-4a04-ae73-67e8dc894abd.png?w=200](https://cdn.relsoul.com/public/uploads/soul/2023-06-16/38c5c5e8-9b4c-4a04-ae73-67e8dc894abd.png?w=200)
+
+
+**调整高度**
+
+`?h=200`
+>[https://cdn.relsoul.com/public/uploads/soul/2023-06-16/38c5c5e8-9b4c-4a04-ae73-67e8dc894abd.png?h=200](https://cdn.relsoul.com/public/uploads/soul/2023-06-16/38c5c5e8-9b4c-4a04-ae73-67e8dc894abd.png?h=200)
+
+
+**整合范例**
+
+>[https://cdn.relsoul.com/public/uploads/soul/2023-06-16/38c5c5e8-9b4c-4a04-ae73-67e8dc894abd.png?f=webp&w=200&h=200](https://cdn.relsoul.com/public/uploads/soul/2023-06-16/38c5c5e8-9b4c-4a04-ae73-67e8dc894abd.png?f=webp&w=200&h=200)
+
 
 # 安装
 
