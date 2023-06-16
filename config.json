@@ -2,12 +2,21 @@
   "port": 10244,
   "secret": "nKSXWSpbGCIFgMs",
   "host": "http://127.0.0.1:10244/",
+  "compressImage": true,
+  "compressImageOpt": {
+    "imgExt": ["png", "jpg", "jpeg", "webp", "gif"],
+    "allowFormat": ["png", "jpg", "jpeg", "webp"],
+    "width": 4000,
+    "quality": 79,
+    "format": false
+  },
+
   "accept": {
     ".jpg|.png|.jpeg|.webp": {
       "maxSize": 100
     },
     ".zip|.gif": {
-      "maxSize": 4
+      "maxSize": 50
     }
   },
   "user": [{ "name": "soul", "pw": "nKSXWSpbGCIFgMs" }]

@@ -24,26 +24,7 @@ import { AuthGuard } from './auth.guard';
 import { v4 as uuidv4 } from 'uuid';
 import { NextFunction, Request, Response } from 'express';
 import * as sharp from 'sharp';
-async function deleteFile(path) {
-  let res;
-  try {
-    res = await fs.remove(path);
-  } catch (e) {
-    return Promise.reject(new Error(e));
-  }
-  return Promise.resolve(res);
-}
-
-function hasAllowQuery(queryList) {
-  const allowQuery = ['w', 'h', 'f'];
-  const _returnKeys = [];
-  for (const i of queryList) {
-    if (allowQuery.includes(i)) {
-      _returnKeys.push(i);
-    }
-  }
-  return _returnKeys;
-}
+import { globSync } from 'glob';
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -85,7 +66,7 @@ export class AppController {
     const filePath = path.join(__dirname, '../', originalUrl);
 
     const keys = Object.keys(req.query);
-    const allowQuery = hasAllowQuery(keys);
+    const allowQuery = this.appService.hasAllowQuery(keys);
     if (allowQuery.length > 0) {
       const exists = await fs.pathExists(filePath);
       if (!exists) {
@@ -121,9 +102,40 @@ export class AppController {
     res.sendFile(filePath);
   }
 
-  @Get()
+  @Get('/')
   getHello(): string {
     return 'minify upload start success';
+  }
+  @Get('/optimize')
+  @UseGuards(AuthGuard)
+  async optimize() {
+    const files = globSync(
+      path.join(__dirname, '../public/uploads/**/*.{jpg,png,jpeg,webp}'),
+    );
+    const optimizeList = [];
+    const optimizeListError = [];
+    console.log('files', files);
+    for (const originPath of files) {
+      const { width, quality, format } =
+        this.appService.buildSharpOpt(originPath);
+      let formatFilePath;
+      try {
+        const res = await this.appService.uploadSharpCompress({
+          width,
+          quality,
+          format,
+          originPath,
+        });
+        formatFilePath = res.formatFilePath;
+      } catch (e) {
+        optimizeListError.push(originPath);
+        console.error('优化失败', e);
+        continue;
+      }
+
+      optimizeList.push(formatFilePath);
+    }
+    return buildResult(1, '优化完毕', { optimizeList, optimizeListError });
   }
 
   @Post('/upload')
@@ -133,6 +145,10 @@ export class AppController {
     // const req = ctx.req;
     const fileInfo = path.parse(req.file.filename);
     const accept = this.configService.get('accept');
+    let fullFilePath = path.join(
+      req.res.locals.__userProjectPath,
+      req.file.filename,
+    );
     const keys = Object.keys(accept);
     const isFind = keys.find((n) => {
       const reg = new RegExp(n);
@@ -141,7 +157,7 @@ export class AppController {
     });
 
     if (!isFind) {
-      await deleteFile(req.file.path);
+      await this.appService.deleteFile(req.file.path);
       throw new HttpException(
         buildResult(-1, `文件不被接受，请传递${keys.join(',')}类型的文件`, {}),
         HttpStatus.SERVICE_UNAVAILABLE,
@@ -151,18 +167,39 @@ export class AppController {
     const confAcceptItem = accept[isFind];
 
     if (req.file.size / (1024 * 1024) > confAcceptItem.maxSize) {
-      await deleteFile(req.file.path);
+      await this.appService.deleteFile(req.file.path);
       throw new HttpException(
         buildResult(-1, `文件大小超出${confAcceptItem.maxSize}M`, {}),
         HttpStatus.SERVICE_UNAVAILABLE,
       );
+    }
+    // 压缩图片
+    const originPath = path.join(__dirname, '../', fullFilePath);
+    const compressImage = this.configService.get('compressImage');
+
+    if (compressImage && this.appService.hasSupportImageExt(originPath)) {
+      // 判断原始图片是否支持
+
+      const { width, quality, format } =
+        this.appService.buildSharpOpt(originPath);
+
+      const { formatFilePath } = await this.appService.uploadSharpCompress({
+        width,
+        quality,
+        format,
+        originPath,
+      });
+      const _path = path.parse(formatFilePath);
+      const _oPath = path.parse(fullFilePath);
+
+      fullFilePath = `${_oPath.dir}/${_path.base}`;
     }
 
     const host = this.configService.get('host');
 
     return buildResult(1, '上传成功', {
       filename: req.file.filename,
-      url: path.join(host, req.res.locals.__userProjectPath, req.file.filename),
+      url: path.join(host, fullFilePath),
     });
   }
 }
