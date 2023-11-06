@@ -201,7 +201,7 @@ export class AppController {
 
     return buildResult(1, '上传成功', {
       filename: req.file.filename,
-      url: path.join(host, fullFilePath),
+      url: host + fullFilePath.replace('/public', 'public'),
     });
   }
 }
